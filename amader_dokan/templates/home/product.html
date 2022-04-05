@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block index %}
+
+<div class="container">
+    <h1><a href="{% url 'store:index' %}">Home</a></h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        {% for photos in product_images %}
+        <div class="col">
+            <div class="image">
+                <img style="height: 100px; width: 100px;" src="{{ photos.images.url }}" alt="">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="card mb-3">
+        <img src="{{ item.image.url }}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <h3><samp style="font-size: 1.7rem;">৳</samp> {{ item.price }}</h3>
+            {% if item.old_price %}
+            <h4 style="opacity: 0.5; text-decoration: solid line-through;"><samp style="font-size: 1.3rem;">
+                    ৳</samp> {{item.price }}</h4>
+            {% endif %}
+            <p class="card-text">{{ item.description }}</p>
+
+
+
+            <form method="post" action="{% url 'order:add-to-cart' pk=item.pk %}">
+                {% csrf_token %}
+                {% if item.variationvalue_set.sizes %}
+                <div class="col">
+                    <label for="size">Size</label>
+                    <select class="form-select" name="size" id="size">
+                        <option value="#" selected="selected">Select a size</option>
+                        {% for item_variation in item.variationvalue_set.sizes %}
+                        <option name='size' value="{{item_variation.name}}">{{item_variation.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                <br>
+                <br>
+                {% if item.variationvalue_set.colors %}
+                <div class="col">
+                    <label for="color">Colors:</label>
+                    <select name="color" id="size" class="form-control">
+                        <option value="#" selected="selected">Select a color</option>
+                        {% for item_variation in item.variationvalue_set.colors %}
+                        <option name='color' value="{{item_variation.name}}">{{item_variation.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                <br>
+                <div class="form-outline">
+                    <label class="form-label" for="typeNumber">Quantity</label>
+                    <input type="number" id="typeNumber" class="form-control" name="quantity" value="1" min="1" max="5">
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Add To Cart</button>
+            </form>
+            <p class="card-text"><small class="text-muted">{{ item.created }}</small></p>
+        </div>
+    </div>
+</div>
+<div class="container similar-product">
+    <h1>Similar Product</h1>
+    <div class="row">
+        {% for it in similar_item %}
+        {% if item.id != it.id %}
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="{{ it.image.url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ it.name }}</h5>
+                    <h3><samp style="font-size: 1.7rem;">৳</samp> {{ it.price }}</h3>
+                    {% if it.old_price %}
+                    <h4 style="opacity: 0.5; text-decoration: solid line-through;"><samp
+                            style="font-size: 1.3rem;">৳</samp> {{ it.price }}</h4>
+                    {% endif %}
+                    <p class="card-text">{{ it.preview_des }}</p>
+                    <a href="{{ it.get_product_url }}" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+
+    {% endblock %}

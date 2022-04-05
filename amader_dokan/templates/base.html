@@ -1,0 +1,69 @@
+{% load static %}
+{% load category %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block registerHead %}
+
+    {% endblock %}
+    {% block homeStatic %}
+    <!-- <link rel="stylesheet" href="{% static 'home/style.css' %}"> -->
+    {% endblock %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <h1 id="heading">PHONE KINBO</h1>
+            <h1><a href="{% url 'account:reqister' %}">register</a></h1>
+            <h1><a href="{% url 'account:login' %}">Log In</a></h1>
+            <br>
+            <br>
+            <h2>category section</h2>
+            {% for cat in request.user|categorys %}
+            <div class="btn-group my-2">
+                {% if not cat.children.all %}
+                <a class="btn btn-primary" href="#">
+                    {{ cat.name }}</a>
+                {% else %}
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                    {{ cat.name }}</button>
+                <ul class="dropdown-menu">
+                    {% for subcategory in cat.children.all %}
+                    <li><a class="dropdown-item" href="#">
+                            {{subcategory.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </header>
+
+    {% block index %}
+
+    {% endblock %}
+
+    {% block login %}
+    {% endblock %}
+
+    {% block register %}
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

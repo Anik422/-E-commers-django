@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load cart_product %}
+<!-- {% load static %} -->
+
+{% block homeStatic %}
+<link rel="stylesheet" href="{% static 'home/style.css' %}">
+{% endblock %}
+
+{% block title %}{{ view.build_page_title }}{% endblock %}
+
+{% block index %}
+<div class="container" style="background-color: aqua; margin-bottom: 50px;">
+    <h1>Cart</h1>
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">image</th>
+                    <th scope="col">Nmae</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if request.user.is_authenticated %}
+                {% if request.user|cart_view %}
+                {% for cart in request.user|cart_view %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><img style="height: 50px; width: 50px;" src="{{ cart.item.image.url }}" alt=""></td>
+                    <td>{{ cart.item.name }}</td>
+                    <td>{{ cart.quantity }} X {{ cart.item.price }}</td>
+                    <td>{{ cart.get_total }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th><a href="{% url 'order:cart' %}" class="btn btn-primary">View Cart</a></th>
+                    {% if request.user.is_authenticated %}
+                    <th>Total Price</th>
+                    <th>BDT {{request.user|cart_total_price}}</th>
+                    {% else %}
+                    <th>BDT 0.00</th>
+                    {% endif %}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        {% for product in products %}
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="{{ product.image.url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <h3><samp style="font-size: 1.7rem;">৳</samp> {{ product.price }}</h3>
+                    {% if product.old_price %}
+                    <h4 style="opacity: 0.5; text-decoration: solid line-through;"><samp
+                            style="font-size: 1.3rem;">৳</samp> {{ product.price }}</h4>
+                    {% endif %}
+                    <p class="card-text">{{ product.preview_des }}</p>
+                    <a href="{{ product.get_product_url }}" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

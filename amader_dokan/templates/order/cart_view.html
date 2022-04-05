@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block index %}
+<div class="container">
+    <h1><a href="{% url 'store:index' %}">Home</a></h1>
+</div>
+<div class="display" style="display: flex;">
+
+    <div class="con" style="background-color: aqua; width: 75%; display: lest; text-align: center;">
+        <h1>Cart</h1>
+        <table class="table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">image</th>
+                    <th scope="col">Nmae</th>
+                    <th scope="col">Color</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Price</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            {% if carts %}
+            <tbody>
+                {% for cart in carts %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><img style="height: 100px; width: 100px;" src="{{ cart.item.image.url }}" alt=""></td>
+                    <td>{{ cart.item.name }}</td>
+                    {% if cart.color %}
+                    <td>{{ cart.color }}</td>
+                    {% else %}
+                    <td>No Color</td>
+                    {% endif %}
+                    {% if cart.size %}
+                    <td>{{ cart.size }}</td>
+                    {% else %}
+                    <td>No Size</td>
+                    {% endif %}
+
+
+                    <td>BDT
+                        {% if cart.variation_single_price %}
+                        {{ cart.variation_single_price }}
+                        {% else %}
+                        {{ cart.item.price }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="quantity">
+                            <a href="{% url 'order:decrease' pk=cart.item.pk %}"><i class="fa-solid fa-minus"></i></a>
+                            <span> {{ cart.quantity }} </span>
+                            <a href="{% url 'order:increase' pk=cart.item.pk %}"><i class="fa-solid fa-plus"></i></a>
+                        </div>
+                    </td>
+                    <td>BDT
+                        {% if cart.variation_total %}
+                        {{ cart.variation_total }}
+                        {% else %}
+                        {{ cart.get_total }}
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'order:remove-item' pk=cart.item.pk %}"><button><i
+                                    class="fa-solid fa-trash-can"></i></i></button></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+    <div class="cont" style="background-color: rgb(51, 44, 83); width: 25%; display: lest; text-align: center;">
+        <h1 style="color: aliceblue;">Cart Total</h1>
+        <table class="table table-dark table-hover" style="width: 100%; padding: 0; margin: 0;">
+            <tbody>
+                <tr>
+                    <th scope="row">Subtotal :</th>
+                    <td colspan="2">{{ order.get_total_price }} TK</td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <th scope="row"></th>
+                    <td colspan="2"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
