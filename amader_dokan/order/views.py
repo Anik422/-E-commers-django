@@ -1,10 +1,9 @@
-from multiprocessing import context
-from django import views
-from django.shortcuts import get_object_or_404, render, get_list_or_404, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from store.models import Product
 from order.models import Cart, Order
 from coupon.forms import CouponCodeForm
 from coupon.models import Coupon
+from django.utils import timezone
 # Create your views here.
 
 
@@ -46,10 +45,27 @@ def cart_view(request):
     if carts.exists() and orders.exists():
         order = orders[0]
         coupon_form = CouponCodeForm(request.POST)
+        if coupon_form.is_valid():
+            current_time = timezone.now()
+            code = coupon_form.cleaned_data.get('code')
+            coupon_obj = Coupon.objects.get(code=code, active=True)
+            if coupon_obj.valid_to >= current_time:
+                get_discount = (coupon_obj.discount / 100) * \
+                    order.get_total_price()
+                total_price_after_discount = order.get_total_price() - get_discount
+                request.session['discount_total'] = total_price_after_discount
+                request.session['coupon_code'] = code
+                return redirect('order:cart')
+        total_price_after_discount = request.session.get('discount_total')
+        coupon_code = request.session.get('coupon_code')
+        discount = order.get_total_price() - total_price_after_discount
         context = {
             'carts': carts,
             'order': order,
-            'coupon_form': coupon_form
+            'coupon_form': coupon_form,
+            'coupon_code': coupon_code,
+            'total_price_after_discount': total_price_after_discount,
+            'discount': discount
         }
     return render(request, 'order/cart_view.html', context)
 

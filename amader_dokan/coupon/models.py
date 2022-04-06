@@ -8,7 +8,7 @@ class Coupon(models.Model):
     valid_from = models.DateTimeField()
     valid_to = models.DateTimeField()
     discount = models.IntegerField(
-        validators=[MinValueValidator(1), MinValueValidator(70)])
+        validators=[MinValueValidator(1), MaxValueValidator(70)])
     active = models.BooleanField(default=False)
 
     class Meta:

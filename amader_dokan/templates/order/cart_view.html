@@ -68,6 +68,15 @@
             </tbody>
             {% endif %}
         </table>
+        <div class="coupon">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ coupon_form }}
+                <button type="submit">Submit</i></button>
+            </form>
+            <br>
+            <br>
+        </div>
     </div>
     <div class="cont" style="background-color: rgb(51, 44, 83); width: 25%; display: lest; text-align: center;">
         <h1 style="color: aliceblue;">Cart Total</h1>
@@ -75,16 +84,25 @@
             <tbody>
                 <tr>
                     <th scope="row">Subtotal :</th>
-                    <td colspan="2">{{ order.get_total_price }} TK</td>
+                    <td colspan="2">BDT {{ order.get_total_price }}</td>
                 </tr>
                 <tr>
-                    <th scope="row"></th>
-                    <td colspan="2"></td>
+                    <th scope="row">Coupun Discount</th>
+                    {% if discount %}
+                    <td colspan="2">BDT - {{ discount }}</td>
+                    {% else %}
+                    <td colspan="2">0.00</td>
+                    {% endif %}
                 </tr>
                 <tr>
-                    <th scope="row"></th>
-                    <td colspan="2"></td>
-                    <td></td>
+                    <td colspan="2">Total</td>
+                    <td>BDT
+                        {% if total_price_after_discount %}
+                        {{ total_price_after_discount }}
+                        {% else %}
+                        {{ order.get_total_price }}
+                        {% endif %}
+                    </td>
                 </tr>
             </tbody>
         </table>
